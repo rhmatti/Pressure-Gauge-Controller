@@ -3,6 +3,8 @@ import datetime
 import serial
 import serial.tools.list_ports
 
+readrate = 30 #seconds
+
 print('Available ports:')
 print([comport.device for comport in serial.tools.list_ports.comports()])
 
@@ -54,7 +56,9 @@ def logPressures(sample_time):
         pressures.append(current_pressure)
         print(current_pressure)
         
-        write2File(f'{fileName}_{date}.txt', current_time, current_pressure)
+        if current_time - t0 >= readrate:
+            t0 = current_time
+            write2File(f'{fileName}_{date}.txt', current_time, current_pressure)
 
         time.sleep(sample_time)
 
