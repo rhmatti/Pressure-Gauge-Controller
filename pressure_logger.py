@@ -9,7 +9,7 @@ print([comport.device for comport in serial.tools.list_ports.comports()])
 #Attempts to establish a serial connection to the specified port
 def establishConnection(port):
     try:
-        ser = serial.Serial(port, 9600, timeout=1, bytesize=serial.EIGHTBITS, parity='N', stopbits=serial.STOPBITS_ONE)
+        ser = serial.Serial(port, 115200, timeout=1, bytesize=serial.EIGHTBITS, parity='N', stopbits=serial.STOPBITS_ONE)
         return ser
     except:
         print('Could not establish connection to specified port')
@@ -19,10 +19,13 @@ def getPressure():
     #ser.write(b'QUERY')
     reading = ser.readline()
     print(reading)
-    pressure = repr(reading).split('\\')[0].split('\'')[1]
+    pressure = repr(reading).split('\\')[0].split('\'')[1].replace('E', 'e')
 
     if pressure != '':
-        return float(pressure)
+        try:
+            return float(pressure)
+        except:
+            print('Could not convert pressure reading to float')
 
 #Writes a pressure reading and timestamp to a log file
 def write2File(filename, time, pressure):
